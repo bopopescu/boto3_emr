@@ -2,7 +2,7 @@
 import boto3, json, time
 from botocore.exceptions import ClientError
 
-session = boto3.session.Session(profile_name='dev', region_name='us-west-2')
+session = boto3.session.Session(profile_name='dev', region_name='us-east-1')
 
 env_char    = "d"
 account_id  = ""
@@ -92,7 +92,7 @@ sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start -
 #sudo echo "/opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start -m ec2 -c file:/etc/cloudwatch_agent.json" >> /etc/rc.local
 sudo sh -c  "echo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -a start -m ec2 -c file:/etc/cloudwatch_agent.json >> /etc/rc.local"
 """
-f = open("/tmp/boto3_emr_bootstrap_script_test.sh", "w+")
+f = open("/tmp/boto3_emr_bootstrap_script.sh", "w+")
 f.write(template)
 
 bucket = '{}-emr-resources'.format(env_char),
