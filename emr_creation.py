@@ -9,7 +9,7 @@ account_id  = ""
 subnet_id   = ""
 key_name    = ""
 
-master_instance_type = 'm4.large'
+main_instance_type = 'm4.large'
 core_instance_type   = 'm4.large'
 task_instance_type   = 'm4.large'
 no_of_core_instances = 2
@@ -483,8 +483,8 @@ ec2     = session.client('ec2')
 vpc_id = ""
 
 try:
-    response = ec2.create_security_group(GroupName='BOTO3_emr_master',
-                                         Description='sg for emr master node',
+    response = ec2.create_security_group(GroupName='BOTO3_emr_main',
+                                         Description='sg for emr main node',
                                          VpcId=vpc_id)
     security_group_id = response['GroupId']
     print('Security Group Created %s in vpc %s.' % (security_group_id, vpc_id))
@@ -685,7 +685,7 @@ time.sleep(60)
 ################################# EMR CREATION ############################################################
 emrClient = session.client('emr')
 
-masterInstanceType = master_instance_type
+mainInstanceType = main_instance_type
 coreInstanceType   = core_instance_type
 taskInstanceType   = task_instance_type
 coreInstanceNum    = no_of_core_instances
@@ -698,16 +698,16 @@ instances = {
     'Ec2KeyName': key_name,
     'Ec2SubnetId': subnet_id,
     'ServiceAccessSecurityGroup': service_security_group_id,
-    'EmrManagedMasterSecurityGroup': security_group_id,
-    'EmrManagedSlaveSecurityGroup': core_security_group_id,
+    'EmrManagedMainSecurityGroup': security_group_id,
+    'EmrManagedSubordinateSecurityGroup': core_security_group_id,
     'KeepJobFlowAliveWhenNoSteps': True,
     'TerminationProtected': False,
     'InstanceGroups': [{
         'InstanceRole': 'MASTER',
         "InstanceCount": 1,
-            "InstanceType": masterInstanceType,
+            "InstanceType": mainInstanceType,
             "Market": "ON_DEMAND",
-            "Name": "Master"
+            "Name": "Main"
         }, 
         {
             'InstanceRole': 'CORE',
@@ -778,8 +778,8 @@ bootstrapActions = [
     'ScriptBootstrapAction': {
         'Path' : 's3://{}-emr-resources/emr/bootstrap-actions/boto3_emr_bootstrap.sh'.format(env_char),
         'Args' : [
-            'instance.isMaster=true', 
-            'echo running on master node'
+            'instance.isMain=true', 
+            'echo running on main node'
          ]
     }
   }
